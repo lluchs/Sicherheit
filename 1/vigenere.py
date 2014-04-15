@@ -29,4 +29,6 @@ def calculate_distribution(word):
 for word in extract_words(CHIFFRE, KEYLEN):
 	print(word)
 	distribution = calculate_distribution(word)
-	print(distribution)
+	sorted_distribution = list(distribution.items())
+	sorted_distribution.sort(key=lambda x: x[1], reverse=True)
+	print(sorted_distribution)
