@@ -16,5 +16,17 @@ def extract_words(chiffre, keylen):
 
 	return words
 
+# Counts the number of individual characters.
+def calculate_distribution(word):
+	result = {}
+	for char in word:
+		if char not in result:
+			result[char] = 1
+		else:
+			result[char] += 1
+	return result
+
 for word in extract_words(CHIFFRE, KEYLEN):
 	print word
+	distribution = calculate_distribution(word)
+	print distribution
