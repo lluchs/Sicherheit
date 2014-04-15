@@ -32,3 +32,7 @@ for word in extract_words(CHIFFRE, KEYLEN):
 	sorted_distribution = list(distribution.items())
 	sorted_distribution.sort(key=lambda x: x[1], reverse=True)
 	print(sorted_distribution)
+	# Assume that the most used letter is always 'E'.
+	shift_amount = ord(sorted_distribution[0][0]) - ord('E') 
+	print(shift_amount)
+	print(chr(ord('A') + (shift_amount % 26)))
