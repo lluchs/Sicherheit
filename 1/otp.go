@@ -36,23 +36,25 @@ func generateKey(size int64) ([]byte, error) {
 	return rndbytes, nil
 }
 
-func encrypt(filename string) error {
-	// Open the file.
-	file, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
+func getFileSize(file *os.File) (size int64, err error) {
 	stat, err := file.Stat()
+	if err == nil {
+		size = stat.Size()
+	}
+	return
+}
+
+func encrypt(file *os.File) error {
+	size, err := getFileSize(file)
 	if err != nil {
 		return err
 	}
-	key, err := generateKey(stat.Size())
+	key, err := generateKey(size)
 	if err != nil {
 		return err
 	}
 	// Open output file.
-	outfile, err := os.Create(fmt.Sprintf("%s.otp", filename))
+	outfile, err := os.Create(fmt.Sprintf("%s.otp", file.Name()))
 	if err != nil {
 		return err
 	}
@@ -80,7 +82,14 @@ func main() {
 		return
 	}
 
-	err := encrypt(os.Args[1])
+	// Open the file.
+	file, err := os.Open(os.Args[1])
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	err = encrypt(file)
 	if err != nil {
 		panic(err)
 	}
