@@ -113,6 +113,17 @@ func cmdEncrypt(args []string) {
 		panic(err)
 	}
 
+	// Save the key.
+	keyfile, err := os.Create("key")
+	if err != nil {
+		panic(err)
+	}
+	defer keyfile.Close()
+	_, err = keyfile.Write(key)
+	if err != nil {
+		panic(err)
+	}
+
 	for _, file := range files {
 		err = encrypt(file, key)
 		if err != nil {
