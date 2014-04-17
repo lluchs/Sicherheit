@@ -36,10 +36,26 @@ func generateKey(size int64) ([]byte, error) {
 	return rndbytes, nil
 }
 
+// Returns a file's size.
 func getFileSize(file *os.File) (size int64, err error) {
 	stat, err := file.Stat()
 	if err == nil {
 		size = stat.Size()
+	}
+	return
+}
+
+// Opens a file and returns both the file and its size.
+func openAndGetFileSize(filename string) (file *os.File, size int64, err error) {
+	file, err = os.Open(filename)
+	if err != nil {
+		return
+	}
+	size, err = getFileSize(file)
+	if err != nil {
+		file.Close()
+		file = nil
+		return
 	}
 	return
 }
@@ -71,28 +87,37 @@ func encrypt(file *os.File, key []byte) error {
 }
 
 func main() {
-	if (len(os.Args) != 2) {
-		fmt.Println("Usage: otp <file1>")
+	if (len(os.Args) < 2) {
+		fmt.Println("Usage: otp <file1> [file2 [...]]")
 		return
 	}
 
-	// Open the file.
-	file, err := os.Open(os.Args[1])
-	if err != nil {
-		panic(err)
+	// Save all specified files.
+	files := make([]*os.File, 0, len(os.Args) - 1)
+	// Maximum file length.
+	maxlen := int64(0)
+	// Open the files.
+	for i := 1; i < len(os.Args); i++ {
+		file, length, err := openAndGetFileSize(os.Args[i])
+		if err != nil {
+			panic(err)
+		}
+		defer file.Close()
+		if maxlen < length {
+			maxlen = length
+		}
+		files = append(files, file)
 	}
-	defer file.Close()
-	size, err := getFileSize(file)
-	if err != nil {
-		panic(err)
-	}
-	key, err := generateKey(size)
+
+	key, err := generateKey(maxlen)
 	if err != nil {
 		panic(err)
 	}
 
-	err = encrypt(file, key)
-	if err != nil {
-		panic(err)
+	for _, file := range files {
+		err = encrypt(file, key)
+		if err != nil {
+			panic(err)
+		}
 	}
 }
