@@ -180,7 +180,7 @@ func main() {
 		cmdXor(os.Args[2:])
 	default:
 		fmt.Println("Usage: otp <command>")
-		fmt.Println("Possible commands: encrypt")
+		fmt.Println("Possible commands: encrypt, xor")
 		os.Exit(1)
 	}
 }
