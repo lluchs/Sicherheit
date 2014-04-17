@@ -86,19 +86,18 @@ func encrypt(file *os.File, key []byte) error {
 	return nil
 }
 
-func main() {
-	if (len(os.Args) < 2) {
-		fmt.Println("Usage: otp <file1> [file2 [...]]")
+func cmdEncrypt(args []string) {
+	if (len(args) < 1) {
+		fmt.Println("Usage: otp encrypt <file1> [file2 [...]]")
 		return
 	}
-
 	// Save all specified files.
-	files := make([]*os.File, 0, len(os.Args) - 1)
+	files := make([]*os.File, 0, len(args))
 	// Maximum file length.
 	maxlen := int64(0)
 	// Open the files.
-	for i := 1; i < len(os.Args); i++ {
-		file, length, err := openAndGetFileSize(os.Args[i])
+	for _, filename := range args {
+		file, length, err := openAndGetFileSize(filename)
 		if err != nil {
 			panic(err)
 		}
@@ -119,5 +118,20 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+	}
+}
+
+func main() {
+	cmd := ""
+	if len(os.Args) >= 2 {
+		cmd = os.Args[1]
+	}
+	switch cmd {
+	case "encrypt":
+		cmdEncrypt(os.Args[2:])
+	default:
+		fmt.Println("Usage: otp <command>")
+		fmt.Println("Possible commands: encrypt")
+		os.Exit(1)
 	}
 }
