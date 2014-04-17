@@ -121,6 +121,42 @@ func cmdEncrypt(args []string) {
 	}
 }
 
+func cmdXor(args []string) {
+	if len(args) != 3 {
+		fmt.Println("Usage: otp xor <file1> <file2> <outfile>")
+		return
+	}
+	file1, err := os.Open(args[0])
+	if err != nil {
+		panic(err)
+	}
+	defer file1.Close()
+	file2, err := os.Open(args[1])
+	if err != nil {
+		panic(err)
+	}
+	defer file2.Close()
+	outfile, err := os.Create(args[2])
+	if err != nil {
+		panic(err)
+	}
+	defer outfile.Close()
+
+	buf1 := make([]byte, 100)
+	buf2 := make([]byte, 100)
+	for {
+		_, err1 := file1.Read(buf1)
+		_, err2 := file2.Read(buf2)
+		_, err = outfile.Write(xor(buf1, buf2))
+		if err != nil {
+			panic(err)
+		}
+		if err1 != nil || err2 != nil {
+			break
+		}
+	}
+}
+
 func main() {
 	cmd := ""
 	if len(os.Args) >= 2 {
@@ -129,6 +165,8 @@ func main() {
 	switch cmd {
 	case "encrypt":
 		cmdEncrypt(os.Args[2:])
+	case "xor":
+		cmdXor(os.Args[2:])
 	default:
 		fmt.Println("Usage: otp <command>")
 		fmt.Println("Possible commands: encrypt")
