@@ -77,7 +77,7 @@ func encrypt(file *os.File, key []byte) error {
 		if err != nil {
 			break
 		}
-		_, err = outfile.Write(xor(buffer, key[keypos:keypos + count]))
+		_, err = outfile.Write(xor(buffer, key[keypos:keypos+count]))
 		if err != nil {
 			return err
 		}
@@ -87,7 +87,7 @@ func encrypt(file *os.File, key []byte) error {
 }
 
 func cmdEncrypt(args []string) {
-	if (len(args) < 1) {
+	if len(args) < 1 {
 		fmt.Println("Usage: otp encrypt <file1> [file2 [...]]")
 		return
 	}
