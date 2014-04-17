@@ -44,15 +44,9 @@ func getFileSize(file *os.File) (size int64, err error) {
 	return
 }
 
-func encrypt(file *os.File) error {
-	size, err := getFileSize(file)
-	if err != nil {
-		return err
-	}
-	key, err := generateKey(size)
-	if err != nil {
-		return err
-	}
+// Encrypts the given file using the key.
+// The key has to be large enough to prevent panics.
+func encrypt(file *os.File, key []byte) error {
 	// Open output file.
 	outfile, err := os.Create(fmt.Sprintf("%s.otp", file.Name()))
 	if err != nil {
@@ -88,8 +82,16 @@ func main() {
 		panic(err)
 	}
 	defer file.Close()
+	size, err := getFileSize(file)
+	if err != nil {
+		panic(err)
+	}
+	key, err := generateKey(size)
+	if err != nil {
+		panic(err)
+	}
 
-	err = encrypt(file)
+	err = encrypt(file, key)
 	if err != nil {
 		panic(err)
 	}
