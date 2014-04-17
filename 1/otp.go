@@ -193,7 +193,7 @@ func cmdWavify(args []string) {
 	// Create a header using a buffer where writes can't fail.
 	header := new(bytes.Buffer)
 	header.Write([]byte(`RIFF`))
-	binary.Write(header, binary.LittleEndian, uint32(length - 8))
+	binary.Write(header, binary.LittleEndian, uint32(length-8))
 	header.Write([]byte(`WAVE`))
 	// fmt header
 	header.Write([]byte(`fmt `))
@@ -214,7 +214,7 @@ func cmdWavify(args []string) {
 	// data header
 	header.Write([]byte(`data`))
 	// data chunk size
-	binary.Write(header, binary.LittleEndian, uint32(length - int64(header.Len())))
+	binary.Write(header, binary.LittleEndian, uint32(length-int64(header.Len())))
 
 	// Write the header.
 	headerLen, err := header.WriteTo(outfile)
