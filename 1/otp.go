@@ -65,7 +65,7 @@ func encrypt(filename string) error {
 		if err != nil {
 			break
 		}
-		_, err = outfile.Write(xor(buffer, key[keypos:count]))
+		_, err = outfile.Write(xor(buffer, key[keypos:keypos + count]))
 		if err != nil {
 			return err
 		}
